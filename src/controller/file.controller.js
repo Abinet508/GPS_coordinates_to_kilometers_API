@@ -19,34 +19,64 @@ const upload = async (req, res) => {
         for( const line of lines ) {
           var obj = JSON.parse(line);
             //console.log(obj);
-            A_latitiude=53.339428
-            A_longtiude=-6.257664
-            B_latitiude=obj["latitude"]
-            B_longtiude=obj["longitude"]
-            if ((A_latitiude == B_latitiude) && (A_longtiude == B_longtiude)) {
+            A_latitude=53.339428
+            A_longitude =-6.257664
+            B_latitude=obj["latitude"]
+            B_longitude=obj["longitude"]
+            if ((A_latitude == B_latitude) && (A_longitude == B_longitude)) {
               return 0;
           }
           else {
-              var radlat1 = Math.PI * A_latitiude/180;
-              var radlat2 = Math.PI * B_latitiude/180;
-              var theta = A_longtiude-B_longtiude;
-              var radtheta = Math.PI * theta/180;
-              var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-              if (dist > 1) {
-                  dist = 1;
-              }
-              dist = Math.acos(dist);
-              dist = dist * 180/Math.PI;
-              dist = dist * 60 * 1.1515;
-              dist = dist * 1.609344 
+              // var radlat1 = Math.PI * A_latitude/180;
+              // var radlat2 = Math.PI * B_latitude/180;
+              // var theta = A_longitude-B_longitude;
+              // var radtheta = Math.PI * theta/180;
+              // var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+              // if (dist > 1) {
+              //     dist = 1;
+              // }
+              // dist = Math.acos(dist);
+              // dist = dist * 180/Math.PI;
+              // dist = dist * 60 * 1.1543;
+              // dist = dist * 1.609344
+
+             
+			var f = 1/298.257; 
+			la1uLambert = A_latitude*Math.PI/180;
+			la2uLambert = B_latitude*Math.PI/180;
+			if (Math.abs(A_latitude)<90){
+				la1uLambert = Math.atan((1 - f)*Math.tan(la1uLambert));
+			}
+			if (Math.abs(B_latitude)<90){
+				la2uLambert = Math.atan((1 - f)*Math.tan(la2uLambert));
+			}
+			la1u = A_latitude*Math.PI/180;
+			lo1u = A_longitude*Math.PI/180;
+			la2u = B_latitude*Math.PI/180;
+			lo2u = B_longitude*Math.PI/180;
+
+			// Lambert Method
+			deltaLat = la2uLambert - la1uLambert; 
+			deltaLon = lo2u - lo1u;
+			a = Math.sin(deltaLat/2)*Math.sin(deltaLat/2) + Math.cos(la1uLambert)*Math.cos(la2uLambert) * Math.sin(deltaLon/2) * Math.sin(deltaLon/2);
+			c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+			P = (la1uLambert + la2uLambert)/2;
+			Q = (la2uLambert - la1uLambert)/2;
+			X = (c - Math.sin(c))*Math.sin(P)*Math.sin(P)*Math.cos(Q)*Math.cos(Q)/Math.cos(c/2)/Math.cos(c/2); 
+			Y = (c + Math.sin(c))*Math.sin(Q)*Math.sin(Q)*Math.cos(P)*Math.cos(P)/Math.sin(c/2)/Math.sin(c/2);
+			dist = 6378.1*(c - f*(X + Y)/2);
+			
+
+			
+		
                
           }
-            console.log(A_latitiude);
-            console.log(A_longtiude);
-            console.log(dist)
+            //console.log(A_latitude);
+            //console.log(A_longitude);
+           // console.log(la2uLambert)
             if(dist<=100){
               
-             newdata={"user_id":obj["user_id"],"name":obj["name"]} 
+             newdata={"user_id":obj["user_id"],"name":obj["name"],"Distance":dist,"latitude":B_latitude,"longitude":B_longitude} 
            
             //obj["KM"]=dist
             alllines.push(newdata)  
