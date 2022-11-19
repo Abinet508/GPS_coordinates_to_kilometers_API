@@ -1,6 +1,6 @@
 # Node.js Express web service API distance calculator
 
-> calculate the distance between any coordinate on txt file and my prespecified coordinate and return user_id and name that have distance under 100km of  my coordinate. The inputs is .txt format:
+> calculate the distance between any coordinate on txt file and my coordinates and return user_id and name that have distance under 100km of my location. The inputs is .txt format:
 
 
 ## .txt Example:
